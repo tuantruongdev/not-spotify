@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.media3.ui.PlayerView
+        android:layout_alignParentBottom="true"
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:isScrollContainer="false"
+        app:show_timeout="0"
+        app:hide_on_touch="false"
+        app:show_buffering="always"/>
+
+</RelativeLayout>

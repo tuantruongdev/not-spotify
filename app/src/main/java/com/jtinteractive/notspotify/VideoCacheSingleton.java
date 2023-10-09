@@ -2,10 +2,11 @@ package com.jtinteractive.notspotify;
 
 import android.content.Context;
 
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.upstream.cache.Cache;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+
+import androidx.media3.database.ExoDatabaseProvider;
+import androidx.media3.datasource.cache.Cache;
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor;
+import androidx.media3.datasource.cache.SimpleCache;
 
 import java.io.File;
 

@@ -31,7 +31,7 @@ public class PlaybackService extends MediaSessionService {
     NotificationCompat.Builder builder = null;
     private ExoPlayer player = null;
     private MediaSession mediaSession = null;
-    private final MediaSession.Callback callback = new MyCallback();
+
     private  Context context;
     private final int NOTIFICATION_ID = 200;
     private final String NOTIFICATION_CHANNEL_NAME = "notification channel 1";
@@ -48,10 +48,9 @@ public class PlaybackService extends MediaSessionService {
         //player = new ExoPlayer.Builder(context).build();
 
         // Create a MediaSession
-        Bundle extras = new Bundle();
-        extras.putBoolean(MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_NEXT, true);
+
         //mediaSession = new MediaSession.Builder(context, player).setCallback(callback).setId("my media session").setExtras(extras).build();
-        MySingleton.getInstance().InitData(context,callback,extras);
+
         player = MySingleton.getInstance().getPlayer();
         mediaSession = MySingleton.getInstance().getMediaSession();
         Uri mp3 = Uri.parse("http://localhost:8080/song/402/stream");
@@ -64,6 +63,7 @@ public class PlaybackService extends MediaSessionService {
         player.prepare();
         // Play
         player.setPlayWhenReady(true);
+        MySingleton.getInstance().getConsumer().accept(0);
 
         setMediaNotificationProvider(new MyMediaNotificationProvider(getApplicationContext()));
         createNotificationChannel();
@@ -99,7 +99,7 @@ public class PlaybackService extends MediaSessionService {
         return mediaSession;
     }
 
-    public class MyCallback implements MediaSession.Callback {
+    public static class MyCallback implements MediaSession.Callback {
         @Override
         public MediaSession.ConnectionResult onConnect(MediaSession session, MediaSession.ControllerInfo controller) {
             MediaSession.ConnectionResult connectionResult = MediaSession.Callback.super.onConnect(session, controller);

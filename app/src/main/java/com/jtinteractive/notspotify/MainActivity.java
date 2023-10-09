@@ -9,6 +9,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.MediaItem;
@@ -38,7 +39,15 @@ public class MainActivity extends AppCompatActivity {
 //        player = new ExoPlayer.Builder(getApplicationContext()).build();
 
         playerView = findViewById(R.id.player_view);
+        if (ServiceUtils.isServiceRunning(getApplicationContext(),PlaybackService.class)){
+            Log.d("truong1337","running");
+        }else {
+            Log.d("truong1337","not running");
+        }
+
+
         if (MySingleton.getInstance().getPlayer() != null){
+            Log.d("truong1337","set player");
             playerView.setPlayer(MySingleton.getInstance().getPlayer());
         }
         preparePlayer();

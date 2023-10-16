@@ -14,10 +14,10 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.CommandButton;
-import androidx.media3.session.MediaConstants;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 import androidx.media3.session.MediaStyleNotificationHelper;
@@ -28,14 +28,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public class PlaybackService extends MediaSessionService {
-    NotificationCompat.Builder builder = null;
-    private ExoPlayer player = null;
-    private MediaSession mediaSession = null;
-
-    private  Context context;
     private final int NOTIFICATION_ID = 200;
     private final String NOTIFICATION_CHANNEL_NAME = "notification channel 1";
     private final String NOTIFICATION_CHANNEL_ID = "notification channel id 1";
+    NotificationCompat.Builder builder = null;
+    private ExoPlayer player = null;
+    private MediaSession mediaSession = null;
+    private Context context;
 
 
     public PlaybackService() {
@@ -52,11 +51,22 @@ public class PlaybackService extends MediaSessionService {
         //mediaSession = new MediaSession.Builder(context, player).setCallback(callback).setId("my media session").setExtras(extras).build();
 
         player = MySingleton.getInstance().getPlayer();
+        if (player == null) {
+            Log.d("truong1337", "stopping self");
+            stopSelf();
+            return;
+        }
         mediaSession = MySingleton.getInstance().getMediaSession();
-        Uri mp3 = Uri.parse("http://localhost:8080/song/402/stream");
+        Uri mp3 = Uri.parse("http://localhost:8080/song/702/stream");
         MediaItem mediaItem = MediaItem.fromUri(mp3);
         // Set the media item to be played.
         player.setMediaItem(mediaItem);
+
+        Uri mp2 = Uri.parse("http://localhost:8080/song/703/stream");
+       // MyMediaData myObject = (MyMediaData)mediaItem.playbackProperties.tag;
+        MediaMetadata mediaMetadata = new MediaMetadata.Builder().setArtist("nigga 1234").setTitle("jay jo wassup").build();
+        MediaItem mediaItem2 = new MediaItem.Builder().setUri(mp2).setMediaMetadata(mediaMetadata).build();
+        player.addMediaItem(mediaItem2);
         // loop mode
         player.setRepeatMode(player.REPEAT_MODE_ALL);
         // Prepare the player.
@@ -73,7 +83,6 @@ public class PlaybackService extends MediaSessionService {
     private void startForegroundNotification(MediaSessionService mediaSessionService) {
         Notification notificationCompat = builder.build();
         mediaSessionService.startForeground(NOTIFICATION_ID, notificationCompat);
-
     }
 
     private void createNotificationChannel() {
@@ -82,15 +91,29 @@ public class PlaybackService extends MediaSessionService {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(channel);
-        builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("title").setContentText("text").setPriority(NotificationManager.IMPORTANCE_DEFAULT).setContentIntent(pendingIntent).setFullScreenIntent(pendingIntent, true).setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession));
+        builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.frame_27758).setContentTitle("title").setContentText("text").setPriority(NotificationManager.IMPORTANCE_DEFAULT).setContentIntent(pendingIntent).setFullScreenIntent(pendingIntent, true).setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession));
+    }
+
+    @Override
+    public void onUpdateNotification(MediaSession session, boolean startInForegroundRequired) {
+        super.onUpdateNotification(session, startInForegroundRequired);
     }
 
     @Override
     public void onDestroy() {
-        mediaSession.getPlayer().release();
-        mediaSession.release();
-        mediaSession = null;
+        if (mediaSession != null){
+            mediaSession.getPlayer().release();
+            mediaSession.release();
+            mediaSession = null;
+        }
+        Log.d("truong1337","destroying");
+        stopForeground(true);
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return super.onUnbind(intent);
     }
 
     @Nullable

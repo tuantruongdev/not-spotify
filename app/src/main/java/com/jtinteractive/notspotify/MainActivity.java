@@ -39,22 +39,27 @@ public class MainActivity extends AppCompatActivity {
 //        player = new ExoPlayer.Builder(getApplicationContext()).build();
 
         playerView = findViewById(R.id.player_view);
+
+        player =MySingleton.getInstance().getPlayer();
+
+        if (player != null){
+//            player.prepare();
+//            player.setPlayWhenReady(true);
+            Log.d("truong1337","set player");
+            playerView.setPlayer(player);
+
+        }
         if (ServiceUtils.isServiceRunning(getApplicationContext(),PlaybackService.class)){
             Log.d("truong1337","running");
         }else {
+            preparePlayer();
             Log.d("truong1337","not running");
         }
 
-
-        if (MySingleton.getInstance().getPlayer() != null){
-            Log.d("truong1337","set player");
-            playerView.setPlayer(MySingleton.getInstance().getPlayer());
-        }
-        preparePlayer();
       //  update();
         Intent intent = new Intent(getApplicationContext(), PlaybackService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
+            startService(intent);
         }
 
 
